@@ -38,10 +38,15 @@ service.on("connection", function( ws ){
 	clients.push(ws);
 	let user;
 
-	game.on("moved", function( e ) {
+	function moveDispatcher(e) {
 		ws.send(JSON.stringify(Object.assign({type: "move"}, e)));
-	});
+	}
 
+	game.on("moved", moveDispatcher);
+
+	ws.on("close", function(){
+		game.off("moved", moveDispatcher);
+	});
 	ws.on("message", function(m){
 		try {
 			const frame = JSON.parse(m);
@@ -50,13 +55,16 @@ service.on("connection", function( ws ){
 				if( type != "user" ){
 					return ws.send( JSON.stringify({type:"error", error: "User name not declare"}));
 				}
+				console.log("New user ", frame);
 				user = frame.user;
 			} else {
 				switch(type) {
 					case "move" :
+						console.log("Move!  ", frame);
 						game.move( user, frame.x, frame.y );
 						break;
 					case "state":
+						console.log("State!  ", frame);
 						ws.send( JSON.stringify({type: "state", board: game.boardState() }));
 						break;
 					default:
