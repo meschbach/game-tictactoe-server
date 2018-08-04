@@ -49,12 +49,17 @@ service.on("connection", function( ws ){
 		game.off("moved", moveDispatcher);
 	});
 	ws.on("message", function(m){
+		function send( obj ){
+			const frame = JSON.stringify( obj );
+			ws.send(frame);
+		}
+
 		try {
 			const frame = JSON.parse(m);
 			const type = frame.type;
 			if( !user ){
 				if( type != "user" ){
-					return ws.send( JSON.stringify({type:"error", error: "User name not declare"}));
+					return send( {type:"error", error: "User name not declare"} );
 				}
 				console.log("New user ", frame);
 				user = frame.user;
@@ -64,12 +69,12 @@ service.on("connection", function( ws ){
 						console.log("Move!  ", frame);
 						const valid = game.move( user, frame.x, frame.y );
 						if ( !valid ){
-							ws.send( JSON.stringify( {type: "error", error: "Invalid move. Try again?"} ) )
+							send( {type: "error", error: "Invalid move. Try again?"} )
 						}
 						break;
 					case "state":
 						console.log("State!  ", frame);
-						ws.send( JSON.stringify({type: "state", board: game.boardState() }));
+						send({type: "state", board: game.boardState() });
 						break;
 					default:
 						return ws.send( JSON.stringify({type:"error", error: "Unknonw command", command: type}));
