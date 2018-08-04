@@ -11,5 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "ws": "^6.0.0"
+  },
+  "engines": {
+    "node" : "10"
   }
 }
