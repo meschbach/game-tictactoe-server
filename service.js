@@ -21,6 +21,7 @@ class Game extends EventEmitter {
 		this.lastmMoved = user;
 		this.board[position] = user;
 		this.emit("moved", {user, x, y});
+		return true;
 	}
 
 	boardState() {
@@ -61,7 +62,10 @@ service.on("connection", function( ws ){
 				switch(type) {
 					case "move" :
 						console.log("Move!  ", frame);
-						game.move( user, frame.x, frame.y );
+						const valid = game.move( user, frame.x, frame.y );
+						if ( !valid ){
+							ws.send( JSON.stringify( {type: "error", error: "Invalid move. Try again?"} ) )
+						}
 						break;
 					case "state":
 						console.log("State!  ", frame);
