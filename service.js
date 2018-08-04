@@ -64,7 +64,7 @@ service.on("connection", function( ws ){
 						console.log("Move!  ", frame);
 						const valid = game.move( user, frame.x, frame.y );
 						if ( !valid ){
-							ws.send( JSON.stringify( {type: "error", error: "Invalid move. Try again?"} ) )
+							ws.send( JSON.stringify( {type: "error", error: "Invalid move. You can't go twice 😦!"} ) )
 						}
 						break;
 					case "state":
