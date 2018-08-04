@@ -18,7 +18,7 @@ class Game extends EventEmitter {
 			return false;
 		}
 
-		this.lastmMoved = user;
+		this.lastMoved = user;
 		this.board[position] = user;
 		this.emit("moved", {user, x, y});
 		return true;
