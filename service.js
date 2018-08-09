@@ -31,8 +31,6 @@ class Game extends EventEmitter {
 
 const game = new Game();
 
-const clients = [];
-
 const service = new ws.Server({port: process.env.PORT || 1234})
 service.on("connection", function( ws ){
 	function send( obj ){
@@ -40,10 +38,7 @@ service.on("connection", function( ws ){
 		ws.send(frame);
 	}
 
-	clients.push(ws);
-
 	let user;
-
 	function moveDispatcher(e) {
 		const notification = Object.assign({type: "move"}, e);
 		send( notification );
