@@ -35,12 +35,18 @@ const clients = [];
 
 const service = new ws.Server({port: process.env.PORT || 1234})
 service.on("connection", function( ws ){
+	function send( obj ){
+		const frame = JSON.stringify( obj );
+		ws.send(frame);
+	}
 
 	clients.push(ws);
+
 	let user;
 
 	function moveDispatcher(e) {
-		ws.send(JSON.stringify(Object.assign({type: "move"}, e)));
+		const notification = Object.assign({type: "move"}, e);
+		send( notification );
 	}
 
 	game.on("moved", moveDispatcher);
@@ -49,11 +55,6 @@ service.on("connection", function( ws ){
 		game.off("moved", moveDispatcher);
 	});
 	ws.on("message", function(m){
-		function send( obj ){
-			const frame = JSON.stringify( obj );
-			ws.send(frame);
-		}
-
 		try {
 			const frame = JSON.parse(m);
 			const type = frame.type;
